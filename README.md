@@ -122,16 +122,29 @@
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 SpringBoot附件檔案檔名與系統和本機端網址搭配：
+
 > POS訂購系統
+
 　　檔名：SpringbootProject-Lab30-ShoppingCart
+  
 　　本機端網址：http://localhost:8080/
+  
 >	產品管理系統：
+
 　　檔名：SpringbootProject-Lab25-DrinkProductCRUD
+  
 　　本機端網址：http://localhost:8081/
+  
 >	訂單管理系統：
+
 　　檔名：SpringbootProject-Lab32-OrderCRUD
+  
 　　本機端網址：http://localhost:8082/
+  
 >	訂單查詢系統：
+
 　　檔名：SpringbootProject-Lab31-CustomerSearch
+  
 　　本機端網址：http://localhost:8083/
+  
 > 資料庫：my2_pos.sql
