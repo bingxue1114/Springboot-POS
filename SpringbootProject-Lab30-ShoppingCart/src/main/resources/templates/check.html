@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <title>確認訂單</title>
+    </head>
+    <style>
+        @import url(https://fonts.googleapis.com/earlyaccess/notosanstc.css);
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        .mt10 {
+            margin-top: 10px;
+        }
+    </style>
+
+    <body>
+        <div class="container">
+            <div class="row">
+
+                <!-- 標題開始 -->
+                <div class="col-xs-12 col-sm-10 offset-sm-1 mb-2">
+                    <h1 class="text-center mt10">確認訂單</h1>
+                    <hr>
+                </div>
+                <!-- 標題結束 -->
+
+                <!-- column -->
+                <div class="col-xs-12 col-sm-10 offset-sm-1 mb-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="h6 text-uppercase mb-0">購物清單資訊</h3>
+                        </div>
+
+                        <div class="card-body">
+                            <table border="0" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>品項</th>
+                                        <th>單價</th>
+                                        <th>數量</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item:${session.cart}">
+                                        <td th:text="${item.product_name}"></td>
+                                        <td th:text="${item.product_price}"></td>
+                                        <td th:text="${item.quantity}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- 如果總金額變數為0，顯示購物車內無資料! -->
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-6">
+                                    <h2 th:text="${session.sum} !=0 ?'總金額:$'+${session.sum}"></h2>
+                                </div>
+                                <div class="col-xs-12 col-sm-6">
+                                    <h5 class="text-right">
+                                        <a th:if="${session.sum} !=0" href="/cart" class="btn btn-warning btn-block">清單修改</a>
+                                    </h5>
+                                </div>
+                            </div>
+                            <!-- Row -->
+
+                            <!-- 如果總金額變數為0，顯示購物車內無資料! -->
+                            <h2 th:text="${session.sum} ==0 ?'購物車無商品！'"></h2>
+                            <h5 th:if="${session.sum} ==0">
+                                <a href="/">繼續購買</a>
+                            </h5>
+                        </div>
+                        <!-- end of cardbody -->
+                    </div>
+                    <!-- end of card -->
+                </div>
+                <!-- end of column -->
+
+                <div class="col-xs-12 col-sm-10 offset-sm-1 mb-5">
+                    <!-- 如果購物車是null或是沒有內容，不要顯示購買區塊的內容 -->
+                    <div th:if="${session.cart !=null && !session.cart.empty}">
+                        <!-- column -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="h6 text-uppercase mb-0">訂購資訊</h3>
+                            </div>
+
+                            <div class="card-body">
+                                <!-- 用餐方式 -->
+                                <label for="">用餐方式</label>
+                                <div class="input-group mb-3">
+                                    <select name="category" class="form-control" onclick="return UnlockAnotherButton(value)" required >
+                                        <option disabled selected value="">請選擇用餐方式</option>
+                                        <option  value="ForHere">內用</option>
+                                        <option value="ToGo">外帶</option>
+                                        <option  value="Delivery">外送</option>
+                                    </select>
+                                </div>
+
+                                <form action="/save" method="POST" class="needs-validation" novalidate>
+                                    <div class="row">
+
+                                        <div class="form-group col-md-6" id="DeliveryName" hidden>
+                                            <label for="">訂購者姓名</label>
+                                            <input type="text" name="user-name" class="form-control Delivery" placeholder="請輸入訂購者姓名"/>
+                                            <div class="invalid-feedback">請輸入訂購者姓名</div>
+                                        </div>
+
+                                        <div class="form-group col-md-6" id="DeliveryPhone" hidden>
+                                            <label for="">連絡電話</label>
+                                            <input type="text" name="phone" class="form-control Delivery" placeholder="請輸入連絡電話" />
+                                            <div class="invalid-feedback">請輸入連絡電話</div>
+                                        </div>
+
+                                        <div class="form-group col-md-12" id="DeliveryAddress" hidden>
+                                            <label for="">外送地址</label>
+                                            <input type="text" name="address" class="form-control Delivery" placeholder="請輸入外送地址" />
+                                            <div class="invalid-feedback">請輸入外送地址</div>
+                                        </div>
+
+                                        <div class="form-group col-md-12" id="ForHere" hidden>
+                                            <label for="">桌號</label>
+                                            <input type="number" name="table_num" class="form-control ForHere" placeholder="請輸入桌號" />
+                                            <div class="invalid-feedback">請輸入桌號</div>
+                                        </div>
+
+                                        <div class="form-group col-md-12" id="Buy" hidden>
+                                            <button type="submit" class="btn btn-success btn-block"><i class="fa fa-check-square-o fa-lg"></i> 確定購買</button>
+                                        </div>
+                                    </div>
+                                    <!-- row -->
+                                </form>
+
+                                <!--進度條-->
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-4 offset-sm-8">
+                                        <div class="progress" style="height: 25px;">
+                                            <div id="pb75" class="progress-bar" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">75%</div>
+                                            <div id="pb100" class="progress-bar" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" hidden>100%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end of cardbody -->
+                        </div>
+                        <!-- end of card -->
+                    </div>
+                    <!-- end of thymeleaf if -->
+                </div>
+                <!-- end of column -->
+            </div>
+            <!-- row -->
+        </div>
+        <!-- container -->
+    </body>
+
+    <script>
+        // 訂購資訊驗證
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+
+    <script>
+        //        用餐方式對應不同表格
+        function UnlockAnotherButton(value) {
+            if (value == "ForHere") { //內用
+                $(".ForHere").attr('required', 'true')
+                $("#DeliveryName").attr('hidden', 'true')
+                $("#DeliveryPhone").attr('hidden', 'true')
+                $("#DeliveryAddress").attr('hidden', 'true')
+                $("#ForHere").removeAttr('hidden')
+                $("#Buy").removeAttr('hidden');
+                $("#pb75").attr('hidden', 'true');
+                $("#pb100").removeAttr('hidden');
+            } else if (value == "ToGo") { //外帶
+                $("#DeliveryName").attr('hidden', 'true')
+                $("#DeliveryPhone").attr('hidden', 'true')
+                $("#DeliveryAddress").attr('hidden', 'true')
+                $("#ForHere").attr('hidden', 'true')
+                $("#Buy").removeAttr('hidden');
+                $("#pb75").attr('hidden', 'true');
+                $("#pb100").removeAttr('hidden');
+            } else if (value == "Delivery") { //外送
+                $(".Delivery").attr('required', 'true')
+                $("#DeliveryName").removeAttr('hidden')
+                $("#DeliveryPhone").removeAttr('hidden')
+                $("#DeliveryAddress").removeAttr('hidden')
+                $("#ForHere").attr('hidden', 'true')
+                $("#Buy").removeAttr('hidden');
+                $("#pb75").attr('hidden', 'true');
+                $("#pb100").removeAttr('hidden');
+            }
+        }
+    </script>
+
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+        <!-- Load icon library -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
+
+        <title>新增產品</title>
+    </head>
+    <style>
+        @import url(https://fonts.googleapis.com/earlyaccess/notosanstc.css);
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        .mt10 {
+            margin-top: 10px;
+        }
+
+        .mt5 {
+            margin-top: 5px;
+        }
+
+        .fz18 {
+            font-size: 18px;
+        }
+
+        .fz30 {
+            font-size: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: transparent;
+            border-width: 1px;
+            border-style: solid;
+            border-color: initial;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: .75rem 1.5rem;
+            line-height: 1em;
+            opacity: .9;
+            white-space: nowrap;
+            transform: translateZ(0);
+            font-size: 18px;
+        }
+
+        .green {
+            color: #229f2a;
+        }
+
+        .red {
+            color: #FF3333;
+        }
+
+        .fw700 {
+            font-weight: 700;
+        }
+
+        .mr1rem {
+            margin-right: 1rem;
+        }
+    </style>
+
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-sm-3"></div>
+                <div class="col-xs-12 col-sm-6">
+
+                    <h1 class="text-center fz30 mt10">
+                        新增產品
+                        <hr>
+                    </h1>
+
+                    <form action="/createProduct" th:object="${product}" method="POST" class="needs-validation" novalidate>
+
+                        <!--產品ID-->
+                        <div class="form-group row fz18 mt5">
+                            <label for="aa" class="col-sm-2 col-form-label">編號</label>
+                            <div class="col-sm-10">
+                                <input type="text" th:field="*{product_id}" class="form-control" readonly required/>
+                            </div>
+                        </div>
+
+
+                        <!--產品名稱-->
+                        <div class="form-group row fz18 mt5">
+                            <label for="aa" class="col-sm-2 col-form-label">品名</label>
+                            <div class="col-sm-10">
+                                <input type="text" th:field="*{name}" placeholder="輸入產品名稱" class="form-control" required/>
+                                <div class="invalid-feedback">請輸入產品名稱</div>
+                            </div>
+                        </div>
+
+                        <!--產品類別-->
+                        <div class="form-group row fz18 mt5">
+                            <label for="aa" class="col-sm-2 col-form-label">類別</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" th:field="*{category}" name="category" required>
+                                    <option value="">請選擇產品類別</option>
+                                    <option th:selected="*{category == '吐司'}" value="吐司">吐司</option>
+                                    <option th:selected="*{category == '蛋餅'}" value="蛋餅">蛋餅</option>
+                                    <option th:selected="*{category == '飲料'}" value="飲料">飲料</option>
+                                </select>
+                                <div class="invalid-feedback">請選擇產品類別</div>
+                            </div>
+                        </div>
+
+                        <!--產品價格-->
+                        <div class="form-group row fz18 mt5">
+                            <label for="aa" class="col-sm-2 col-form-label">價格</label>
+                            <div class="col-sm-10">
+                                <input type="number" th:field="*{price}" min="1" placeholder="輸入產品價格" class="form-control" required/>
+                                <div class="invalid-feedback">請輸入大於0的整數</div>
+                            </div>
+                        </div>
+
+                        <!--產品照片-->
+                        <div class="form-group row fz18 mt5">
+                            <label for="aa" class="col-sm-2 col-form-label">圖片</label>
+                            <div class="col-sm-10">
+                                <img id="preview_progressbarTW_img" src="https://api.fnkr.net/testimg/120x100" width="120px" height="100px" style="margin-bottom: 3px;" />
+                                <div class="custom-file">
+                                    <input type="file" th:field="*{photo}" class="custom-file-input" id="progressbarTWInput" accept="image/png, image/gif, image/jpeg" onchange="checkfile(this);" required>
+                                        <label class="custom-file-label" for="customFile" data-browse="上傳">請選擇檔案</label>
+                                        <div class="invalid-feedback">請選擇正確格式的檔案</div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!--產品敘述-->
+                        <div class="form-group row fz18 mt5">
+                            <label for="aa" class="col-sm-2 col-form-label">敘述</label>
+                            <div class="col-sm-10">
+                                <input type="text" th:field="*{description}" placeholder="輸入產品敘述" class="form-control" required/>
+                                <div class="invalid-feedback">請輸入產品敘述</div>
+                            </div>
+                        </div>
+
+                        <!--送出按鈕-->
+                        <div class="actions mt10 text-center">
+                            <input class="btn btn-sm fw700 red mr1rem" type="reset" value="重新填寫" onclick="return confirm('確定要重新填寫?' + '\n' + '清除後，資料無法復原！')" />
+                            <input class="btn btn-sm fw700 green" type="submit" value="送出資料" />
+                        </div>
+                    </form>
+                    <a href="/">回首頁</a>
+
+                </div>
+                <!-- column -->
+
+            </div>
+            <!-- row -->
+        </div>
+        <!-- container -->
+    </body>
+
+
+    <script>
+        //        產品照片上傳
+        $(document).ready(function () {
+            bsCustomFileInput.init();
+        });
+
+        //        產品照片預覽      
+        $("#progressbarTWInput").change(function () {
+
+            readURL(this);
+
+        });
+
+
+        function readURL(input) {
+
+            if (input.files && input.files[0]) {
+
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+
+                    $("#preview_progressbarTW_img").attr('src', e.target.result);
+
+                }
+
+                reader.readAsDataURL(input.files[0]);
+
+            }
+
+        }
+
+
+        // 資料驗證
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+
+        //        檔案判斷
+        function checkfile(sender) {
+            // 可接受的附檔名
+            var validExts = new Array(".jpg", ".png", ".gif");
+
+            var fileExt = sender.value;
+            fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
+            if (validExts.indexOf(fileExt) < 0) {
+                alert("檔案類型錯誤，可接受的副檔名有：" + validExts.toString());
+                sender.value = null;
+                return false;
+            } else
+                return true;
+        }
+    </script>
+
+</html>

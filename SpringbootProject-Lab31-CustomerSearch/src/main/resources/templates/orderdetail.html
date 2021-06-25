@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+        <!-- Load icon library -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+        <title>訂單查詢系統</title>
+    </head>
+    <style>
+        @import url(https://fonts.googleapis.com/earlyaccess/notosanstc.css);
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        .mt10 {
+            margin-top: 10px;
+        }
+    </style>
+
+    <body>
+        <div class="container">
+            <div class="row">
+
+                <!-- 標題開始 -->
+                <div class="col-lg-12 mb-2">
+                    <h1 class="text-center mt10">訂單查詢</h1>
+                    <hr>
+                </div>
+                <!-- 標題結束 -->
+
+                <!-- 篩選開始 -->
+                <div class="col-lg-12 mb-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="h6 text-uppercase mb-0">查詢條件</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+
+                                <div class="col-md-4">
+                                    <!-- 訂單編號 -->
+                                    <form action="/searchOrderDetailByOrderNum" class="form-group needs-validation" novalidate>
+                                        <label for="">訂單編號</label>
+                                        <div class="input-group mb-2">
+                                            <input type="search" name="order_num" class="form-control" placeholder="請輸入訂單編號" required />
+                                            <button type="submit" class="btn btn-info">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                            <div class="invalid-feedback">請輸入訂單編號</div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <!-- 訂購者姓名 -->
+                                    <form action="/searchOrderDetailByCustomername" class="form-group needs-validation" novalidate>
+                                        <label for="">訂購者姓名</label>
+                                        <div class="input-group mb-2">
+                                            <input type="search" name="customer_name" class="form-control" placeholder="請輸入訂購者姓名" required/>
+                                            <button type="submit" class="btn btn-info">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                            <div class="invalid-feedback">請輸入訂購者姓名</div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <!-- 訂購者電話 -->
+                                    <form action="/searchOrderDetailByCustomerphone" class="form-group needs-validation" novalidate>
+                                        <label for="">訂購者電話</label>
+                                        <div class="input-group mb-2">
+                                            <input type="search" name="customer_phone" class="form-control" placeholder="請輸入訂購者電話" required/>
+                                            <button type="submit" class="btn btn-info">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                            <div class="invalid-feedback">請輸入訂購者電話</div>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                            <!-- row -->
+                        </div>
+                        <!-- card body -->
+                    </div>
+                    <!-- card -->
+                </div>
+                <!-- 篩選結束 -->
+
+                <!-- 找不到訂單 -->
+                <div class="col-lg-12 mt-2 mb-2 text-center" id="orderdetails_table_not_find" hidden>
+                    <h2 style="color:red;"><i class="fa fa-times"></i> 找不到訂單 <i class="fa fa-times"></i></h2>
+                    <h4>請重新輸入關鍵字</h4>
+                </div>
+                <!-- 表格顯示產品開始 -->
+                <div class="col-lg-12 mt-2 mb-2" id="orderdetails_table_find">
+                    <h4>查詢結果</h4>
+                    <table style="border:0" class="table table-striped table-responsive-md table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>產品名稱</th>
+                                <th>數量</th>
+                                <th>狀態</th>  
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="orod : ${orderdetails}">
+                                <td class="number"></td>
+                                <td th:text="${orod.product_name}"></td>
+                                <td th:text="${orod.quantity}"></td>
+                                <td th:text="${orod.finished}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- 表格顯示產品結束 -->
+            </div>
+            <!-- column -->
+        </div>
+        <!-- row -->
+
+    </body>
+    <script>
+        // 篩選驗證
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+
+    <script th:inline="javascript">
+        //表格動態#
+        let orderdetails = [[${orderdetails}]];
+        console.log(orderdetails);
+        if (orderdetails == null) {
+            $("#orderdetails_table_find").attr('hidden', 'true')
+            $("#orderdetails_table_not_find").removeAttr('hidden')
+        }
+
+        var list = document.getElementsByClassName("number");
+        for (var i = 0; i <= list.length; i++) {
+            list[i].innerHTML = i + 1;
+        }
+    </script>
+
+</html>

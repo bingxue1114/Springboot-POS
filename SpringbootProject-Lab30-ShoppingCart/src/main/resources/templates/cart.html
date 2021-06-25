@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <title>購物車</title>
+    </head>
+    <style>
+        @import url(https://fonts.googleapis.com/earlyaccess/notosanstc.css);
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        .mt10 {
+            margin-top: 10px;
+        }
+    </style>
+
+    <body>
+
+        <div class="container">
+            <div class="row">
+
+                <!-- 標題開始 -->
+                <div class="col-xs-12 col-sm-10 offset-sm-1 mb-2">
+                    <h1 class="text-center mt10">購物車</h1>
+                    <hr>
+                </div>
+                <!-- 標題結束 -->
+
+                <!-- 表格顯示產品開始 -->
+                <div class="col-xs-12 col-sm-10  offset-sm-1  mb-2">
+                    <table style="border:0" class="table table-striped table-responsive-md">
+                        <thead>
+                            <tr>
+                                <th>編號</th>
+                                <th>品項</th>
+                                <th>單價</th>
+                                <th>數量</th>
+                                <th>修改數量</th>
+                                <th>刪除</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item:${session.cart}">
+                                <td th:text="${item.product_id}"></td>
+                                <td th:text="${item.product_name}"></td>
+                                <td th:text="${item.product_price}"></td>
+                                <td th:text="${item.quantity}"></td>
+                                <td>
+                                    <form action="/modify" class="form-inline">
+                                        <input type="hidden" name="prod_id" th:value="${item.product_id}" />
+                                        <div class="input-group">
+                                            <input type="number" name="orderQty" min="1" class="form-control" th:value="${item.quantity}" required/>
+                                            <button type="submit" class="btn btn-success">修改</button>
+                                        </div>
+                                    </form>
+                                </td>
+                                <td>
+                                    <a th:href="@{/delete(prod_id=${item.product_id})}"><button type="text" class="btn btn-danger"><i class="fa fa-trash fa-lg" aria-hidden="true"></i></button></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- 如果總金額變數不為0，顯示總金額! -->
+                    <div th:if="${session.cart != null && !session.cart.empty}">
+                        <hr>
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-6">
+                                    <h2 th:text="${session.sum} !=0 ?'總金額:$'+${session.sum}"></h2>
+                                </div>
+                                <div class="col-xs-12 col-sm-6">
+                                    <h5 class="text-right">
+                                        <a href="/check" class="btn btn-warning btn-block">結帳</a>
+                                    </h5>
+                                </div>
+                            </div>
+                            <!-- Row -->
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6">
+                            <!-- 如果總金額變數為0，顯示購物車內無資料! -->
+                            <h2 th:text="${session.sum} ==0 ?'購物車無商品！'"></h2>
+                            <h5 class="d-inline-block">
+                                <a href="/">繼續購買</a>
+                            </h5>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 offset-sm-2">
+                            <div th:if="${session.cart != null && !session.cart.empty}">
+                                <div class="progress" style="height: 25px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 表格顯示產品結束 -->
+                </div>
+                <!-- container -->
+            </div>
+            <!-- row -->
+        </div>
+        <!-- container -->
+    </body>
+
+</html>
